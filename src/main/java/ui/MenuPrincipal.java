@@ -7,6 +7,7 @@ import util.*;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.Optional;
 
 public class MenuPrincipal {
 
@@ -93,8 +94,19 @@ public class MenuPrincipal {
     // ---------- 2. Enregistrer une transaction ----------
     private void enregistrerTransaction() {
         int idCompte = lireEntier("ID du compte : ");
-        double montant = lireDouble("Montant : ");
 
+        // On vérifie d'abord que le compte existe
+        Optional<Compte> compteTrouve = compteService.listerTousLesComptes().stream()
+                .filter(c -> c.getId() == idCompte)
+                .findFirst();
+
+        if (compteTrouve.isEmpty()) {
+            System.out.println("Compte introuvable.");
+            return;
+        }
+        Compte compte = compteTrouve.get();
+
+        double montant = lireDouble("Montant : ");
         if (!ValidationUtil.estMontantValide(montant)) {
             System.out.println("Montant invalide.");
             return;
@@ -114,25 +126,16 @@ public class MenuPrincipal {
         System.out.print("Lieu : ");
         String lieu = scanner.nextLine();
 
+        // Enregistrer la transaction
         Transaction transaction = new Transaction(0, DateUtil.maintenant(), montant, type, lieu, idCompte);
         transactionService.ajouterTransaction(transaction);
 
-        // Mettre à jour le solde du compte
-        Compte compte = compteService.rechercherParClient(idCompte).stream()
-                .findFirst()
-                .orElse(null);
-        // Recherche directe par id via la liste de tous les comptes
-        compteService.listerTousLesComptes().stream()
-                .filter(c -> c.getId() == idCompte)
-                .findFirst()
-                .ifPresent(c -> {
-                    double nouveauSolde = switch (type) {
-                        case VERSEMENT -> c.getSolde() + montant;
-                        case RETRAIT -> c.getSolde() - montant;
-                        case VIREMENT -> c.getSolde() - montant;
-                    };
-                    compteService.mettreAJourSolde(idCompte, nouveauSolde);
-                });
+        // Mettre à jour le solde
+        double nouveauSolde = switch (type) {
+            case VERSEMENT -> compte.getSolde() + montant;
+            case RETRAIT, VIREMENT -> compte.getSolde() - montant;
+        };
+        compteService.mettreAJourSolde(idCompte, nouveauSolde);
     }
 
     // ---------- 3. Consulter historique ----------
