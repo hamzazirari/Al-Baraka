@@ -13,7 +13,6 @@ import java.util.List;
 
 public class CompteDAO {
 
-    // CREATE - Ajouter un compte (courant ou épargne)
     public void ajouter(Compte compte) {
         String sql = "INSERT INTO compte (numero, solde, id_client, type_compte, decouvert_autorise, taux_interet) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -42,7 +41,6 @@ public class CompteDAO {
         }
     }
 
-    // READ - Trouver un compte par id
     public Compte trouverParId(int id) {
         String sql = "SELECT * FROM compte WHERE id = ?";
         Compte compte = null;
@@ -64,7 +62,6 @@ public class CompteDAO {
         return compte;
     }
 
-    // READ - Lister tous les comptes
     public List<Compte> listerTout() {
         String sql = "SELECT * FROM compte";
         List<Compte> comptes = new ArrayList<>();
@@ -84,7 +81,6 @@ public class CompteDAO {
         return comptes;
     }
 
-    // READ - Rechercher les comptes d'un client
     public List<Compte> trouverParClient(int idClient) {
         String sql = "SELECT * FROM compte WHERE id_client = ?";
         List<Compte> comptes = new ArrayList<>();
@@ -106,7 +102,6 @@ public class CompteDAO {
         return comptes;
     }
 
-    // UPDATE - Mettre à jour le solde d'un compte
     public void mettreAJourSolde(int id, double nouveauSolde) {
         String sql = "UPDATE compte SET solde = ? WHERE id = ?";
 
@@ -124,7 +119,6 @@ public class CompteDAO {
         }
     }
 
-    // DELETE - Supprimer un compte
     public void supprimer(int id) {
         String sql = "DELETE FROM compte WHERE id = ?";
 
@@ -141,7 +135,6 @@ public class CompteDAO {
         }
     }
 
-    // Méthode utilitaire privée : transforme une ligne de résultat SQL en objet Compte (Courant ou Epargne)
     private Compte construireCompte(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String numero = rs.getString("numero");
