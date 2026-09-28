@@ -20,7 +20,6 @@ public sealed abstract class Compte permits CompteCourant, CompteEpargne {
     public double getSolde() { return solde; }
     public int getIdClient() { return idClient; }
 
-    // Setters utiles (le solde change souvent)
     public void setSolde(double solde) { this.solde = solde; }
     public void setId(int id) { this.id = id; }
 
