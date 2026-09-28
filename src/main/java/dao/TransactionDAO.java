@@ -13,7 +13,6 @@ import java.util.List;
 
 public class TransactionDAO {
 
-    // CREATE - Ajouter une transaction
     public void ajouter(Transaction transaction) {
         String sql = "INSERT INTO transaction (date_transaction, montant, type, lieu, id_compte) VALUES (?, ?, ?, ?, ?)";
 
@@ -34,7 +33,6 @@ public class TransactionDAO {
         }
     }
 
-    // READ - Trouver une transaction par id
     public Transaction trouverParId(int id) {
         String sql = "SELECT * FROM transaction WHERE id = ?";
         Transaction transaction = null;
@@ -56,7 +54,6 @@ public class TransactionDAO {
         return transaction;
     }
 
-    // READ - Lister toutes les transactions (recherche globale)
     public List<Transaction> listerTout() {
         String sql = "SELECT * FROM transaction";
         List<Transaction> transactions = new ArrayList<>();
@@ -76,7 +73,6 @@ public class TransactionDAO {
         return transactions;
     }
 
-    // READ - Rechercher les transactions d'un compte
     public List<Transaction> trouverParCompte(int idCompte) {
         String sql = "SELECT * FROM transaction WHERE id_compte = ?";
         List<Transaction> transactions = new ArrayList<>();
@@ -98,7 +94,6 @@ public class TransactionDAO {
         return transactions;
     }
 
-    // UPDATE - Modifier une transaction
     public void modifier(Transaction transaction) {
         String sql = "UPDATE transaction SET date_transaction = ?, montant = ?, type = ?, lieu = ? WHERE id = ?";
 
@@ -119,7 +114,6 @@ public class TransactionDAO {
         }
     }
 
-    // DELETE - Supprimer une transaction
     public void supprimer(int id) {
         String sql = "DELETE FROM transaction WHERE id = ?";
 
@@ -136,7 +130,6 @@ public class TransactionDAO {
         }
     }
 
-    // Méthode utilitaire privée : transforme une ligne SQL en objet Transaction
     private Transaction construireTransaction(ResultSet rs) throws SQLException {
         return new Transaction(
                 rs.getInt("id"),
