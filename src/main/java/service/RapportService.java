@@ -22,7 +22,6 @@ public class RapportService {
     private static final String PAYS_HABITUEL = "Maroc";
     private static final int NB_MAX_OPERATIONS_PAR_MINUTE = 3;
 
-    // Top 5 des clients par solde total
     public List<Client> top5ClientsParSolde() {
         return clientDAO.listerTout().stream()
                 .sorted(Comparator.comparingDouble(this::getSoldeTotalClient).reversed())
@@ -36,13 +35,11 @@ public class RapportService {
                 .sum();
     }
 
-    // Rapport : nombre de transactions par type
     public Map<TypeTransaction, Long> rapportNombreParType() {
         return transactionDAO.listerTout().stream()
                 .collect(Collectors.groupingBy(Transaction::type, Collectors.counting()));
     }
 
-    // Rapport : volume total
     public double volumeTotalTransactions() {
         return transactionDAO.listerTout().stream()
                 .mapToDouble(Transaction::montant)
@@ -51,27 +48,26 @@ public class RapportService {
 
     // ---------- Détection des transactions suspectes ----------
 
-    // Critère 1 : montant trop élevé
+    // 1  montant trop eleve
     public List<Transaction> detecterMontantEleve() {
         return transactionDAO.listerTout().stream()
                 .filter(t -> t.montant() > SEUIL_MONTANT_SUSPECT)
                 .toList();
     }
 
-    // Critère 2 : lieu différent du pays habituel
+    //  2 lieu different du pays habituel
     public List<Transaction> detecterLieuInhabituel() {
         return transactionDAO.listerTout().stream()
                 .filter(t -> t.lieu() != null && !t.lieu().equalsIgnoreCase(PAYS_HABITUEL))
                 .toList();
     }
 
-    // Critère 3 : trop d'opérations en moins d'une minute sur le même compte
+    // 3  trop operations en moins d'une minute sur le meme compte
     public List<Transaction> detecterFrequenceExcessive() {
-        // On regroupe les transactions par compte : Map<idCompte, liste de transactions>
+
         Map<Integer, List<Transaction>> parCompte = transactionDAO.listerTout().stream()
                 .collect(Collectors.groupingBy(Transaction::idCompte));
 
-        // Pour chaque compte, on garde les transactions "en rafale"
         return parCompte.values().stream()
                 .flatMap(liste -> trouverRafales(liste).stream())
                 .toList();
