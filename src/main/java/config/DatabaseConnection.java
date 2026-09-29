@@ -8,7 +8,7 @@ public class DatabaseConnection {
 
     private static final String URL = "jdbc:mysql://localhost:3306/AlBaraka";
     private static final String USER = "root";
-    private static final String PASSWORD = ""; // vide par défaut avec XAMPP
+    private static final String PASSWORD = "";
 
     private static Connection connection;
 
