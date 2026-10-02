@@ -30,6 +30,7 @@ public class MenuPrincipal {
                 case 3 -> consulterHistorique();
                 case 4 -> lancerAnalyses();
                 case 5 -> voirAlertes();
+                case 6 -> supprimerClient();
                 case 0 -> continuer = false;
                 default -> System.out.println("Choix invalide, réessayez.");
             }
@@ -47,6 +48,7 @@ public class MenuPrincipal {
                 3. Consulter l'historique d'un compte
                 4. Lancer une analyse
                 5. Voir les alertes
+                6. Supprimer un client
                 0. Quitter
                 =======================================
                 """);
@@ -204,6 +206,26 @@ public class MenuPrincipal {
         System.out.println("\n--- Comptes inactifs depuis plus de 30 jours ---");
         rapportService.comptesInactifsDepuis(30)
                 .forEach(c -> System.out.println(c.getNumero()));
+    }
+
+    // ---------- 6. Supprimer un client ----------
+    private void supprimerClient() {
+        int idClient = lireEntier("ID du client à supprimer : ");
+
+        if (clientService.rechercherParId(idClient).isEmpty()) {
+            System.out.println("Client introuvable.");
+            return;
+        }
+
+        System.out.print("Attention : tous les comptes et transactions de ce client seront aussi supprimés (cascade). Confirmer ? (oui/non) : ");
+        String confirmation = scanner.nextLine();
+
+        if (confirmation.equalsIgnoreCase("oui")) {
+            clientService.supprimerClient(idClient);
+            System.out.println("Client supprimé.");
+        } else {
+            System.out.println("Suppression annulée.");
+        }
     }
 
     // ---------- Méthodes utilitaires de lecture ----------
